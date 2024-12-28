@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberAtlas - Cybersecurity Club</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <style>
+        /* General Reset */
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0d1117;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Video Section */
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        /* Content Section */
+        .content {
+            position: relative;
+            text-align: center;
+            z-index: 2;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ffffff;
+        }
+
+        .content.hidden {
+            display: none;
+        }
+
+        .content img {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .content h1 {
+            font-size: 3rem;
+            color: #00d1ff;
+            text-shadow: 0px 0px 10px #00d1ff;
+            margin: 10px 0;
+        }
+
+        .content p {
+            font-size: 1.2rem;
+            color: #ddd;
+            margin: 20px 0;
+        }
+
+        /* Linktree Button */
+        .linktree {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            color: #0d1117;
+            background-color: #00d1ff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .linktree:hover {
+            background-color: #005f73;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Fullscreen Video Section -->
+<div class="video-container">
+    <video id="background-video" autoplay muted loop>
+        <source id="video-source" src="{{ url_for('static', filename='videos/normal_background.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<!-- Content Section -->
+<div class="content" id="page-content">
+    <!-- Club Logo -->
+    <img src="{{ url_for('static', filename='images/cyberatlas_logo.png') }}" alt="CyberAtlas Logo">
+
+    <!-- Main Heading -->
+    <h1>CyberAtlas Club</h1>
+
+    <!-- Description -->
+    <p>Fostering innovation in cybersecurity defense and knowledge sharing.</p>
+
+    <!-- Linktree Button -->
+    <a class="linktree" href="https://linktr.ee/CyberAtlas?fbclid=PAY2xjawHcv95leHRuA2FlbQIxMQABpjtixfbpOUgGB9JVdP5u8uQhMldKYDe3fh1_1qafh82_McFaFQuCdU_PZQ_aem_NA9NXtPLBPIEhiszKMTXCg"
+       target="_blank"
+       rel="noopener noreferrer">
+        Visit our Linktree
+    </a>
+</div>
+
+<script>
+    const videoElement = document.getElementById('background-video');
+    const videoSource = document.getElementById('video-source');
+    const pageContent = document.getElementById('page-content');
+
+    // Update video and content visibility based on state
+    function updateVideoBasedOnState() {
+        fetch('/get_state')
+            .then(response => response.json())
+            .then(data => {
+                const state = data.state;
+
+                console.log("Fetched state:", state);
+
+                if (state === 'attack') {
+                    const attackVideoPath = "{{ url_for('static', filename='videos/attack_background.mp4') }}";
+                    if (videoSource.src !== attackVideoPath) {
+                        videoSource.src = attackVideoPath;
+                        videoElement.load();
+                        console.log("Switched to attack video");
+                    }
+                    pageContent.classList.add('hidden');
+                } else {
+                    const normalVideoPath = "{{ url_for('static', filename='videos/normal_background.mp4') }}";
+                    if (videoSource.src !== normalVideoPath) {
+                        videoSource.src = normalVideoPath;
+                        videoElement.load();
+                        console.log("Switched to normal video");
+                    }
+                    pageContent.classList.remove('hidden');
+                }
+            })
+            .catch(error => console.error('Error fetching state:', error));
+    }
+
+    // Poll to check state every 5 seconds
+    setInterval(updateVideoBasedOnState, 5000);
+    updateVideoBasedOnState();
+</script>
+</body>
+</html>
